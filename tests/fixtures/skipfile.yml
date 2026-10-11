@@ -1,0 +1,5 @@
+# composeguard-ignore-file
+services:
+  x:
+    image: busybox
+    privileged: true

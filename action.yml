@@ -1,0 +1,67 @@
+name: composeguard
+description: Lint Docker Compose files for security and best-practice problems
+author: hamarshehmhmd
+branding:
+  icon: shield
+  color: blue
+inputs:
+  files:
+    description: Space-separated compose files (default autodetect)
+    required: false
+    default: ""
+  format:
+    description: Output format (human, json, sarif, github)
+    required: false
+    default: github
+  fail-on:
+    description: Minimum severity that fails the step (info, warning, error, never)
+    required: false
+    default: warning
+  version:
+    description: composeguard release tag to install
+    required: false
+    default: latest
+  sarif-file:
+    description: If set, also write SARIF to this path
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Install composeguard
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        case "${RUNNER_OS}-${RUNNER_ARCH}" in
+          Linux-X64) t=x86_64-unknown-linux-gnu; ext=tar.gz ;;
+          Linux-ARM64) t=aarch64-unknown-linux-gnu; ext=tar.gz ;;
+          macOS-X64) t=x86_64-apple-darwin; ext=tar.gz ;;
+          macOS-ARM64) t=aarch64-apple-darwin; ext=tar.gz ;;
+          Windows-X64) t=x86_64-pc-windows-msvc; ext=zip ;;
+          *) echo "unsupported runner ${RUNNER_OS}-${RUNNER_ARCH}"; exit 1 ;;
+        esac
+        if [ "$VERSION" = "latest" ]; then
+          VERSION=$(gh release view -R hamarshehmhmd/composeguard --json tagName -q .tagName)
+        fi
+        dir="$RUNNER_TEMP/composeguard"
+        mkdir -p "$dir"
+        gh release download "$VERSION" -R hamarshehmhmd/composeguard -p "composeguard-$VERSION-$t.$ext" -D "$dir"
+        cd "$dir"
+        if [ "$ext" = zip ]; then 7z x -y "*.zip" >/dev/null; else tar xzf *.tar.gz; fi
+        echo "$dir/composeguard-$VERSION-$t" >> "$GITHUB_PATH"
+    - name: Run composeguard
+      shell: bash
+      env:
+        FILES: ${{ inputs.files }}
+        FORMAT: ${{ inputs.format }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        SARIF: ${{ inputs.sarif-file }}
+      run: |
+        set -uo pipefail
+        if [ -n "$SARIF" ]; then
+          composeguard --format sarif --fail-on never $FILES > "$SARIF"
+        fi
+        composeguard --format "$FORMAT" --fail-on "$FAIL_ON" $FILES
