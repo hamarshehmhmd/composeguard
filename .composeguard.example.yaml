@@ -1,0 +1,9 @@
+# Copy to .composeguard.yaml in your repo root.
+# Rules to disable everywhere.
+ignore:
+  - CG011
+# Lowest severity that makes composeguard exit 1: info | warning | error | never
+fail_on: warning
+# Per-rule severity overrides.
+severity:
+  CG007: warning

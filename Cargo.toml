@@ -1,0 +1,26 @@
+[package]
+name = "composeguard"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "Fast single-binary security and best-practice linter for Docker Compose files, with SARIF and GitHub Actions output"
+license = "MIT"
+repository = "https://github.com/hamarshehmhmd/composeguard"
+homepage = "https://github.com/hamarshehmhmd/composeguard"
+readme = "README.md"
+authors = ["Mohammad Hamarsheh"]
+keywords = ["docker", "docker-compose", "linter", "security", "sarif"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [".github/", "tests/fixtures/"]
+
+[dependencies]
+clap = { version = "4.6.7", features = ["derive"] }
+regex = "1.13.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.152"
+serde_yaml = "0.9.34"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

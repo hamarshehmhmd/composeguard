@@ -1,0 +1,22 @@
+services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+    user: "10001:10001"
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    healthcheck:
+      test: ["CMD", "/app/health"]
+      interval: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    environment:
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - API_KEY=${API_KEY}
+    ports:
+      - "127.0.0.1:5432:5432"

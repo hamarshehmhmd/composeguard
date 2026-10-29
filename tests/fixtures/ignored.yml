@@ -1,0 +1,8 @@
+services:
+  # composeguard-ignore: CG007 CG008
+  cache:
+    image: redis:7.2 # composeguard-ignore CG011
+    user: "999"
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    privileged: true  # composeguard-ignore: CG001
