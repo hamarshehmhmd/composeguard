@@ -37,7 +37,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: composeguard-*.*
+          path: |
+            composeguard-*.tar.gz
+            composeguard-*.zip
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -45,10 +47,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
-      - run: sha256sum composeguard-* > SHA256SUMS
+      - run: sha256sum composeguard-*.tar.gz composeguard-*.zip > SHA256SUMS
       - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: |
-            composeguard-*
+            composeguard-*.tar.gz
+            composeguard-*.zip
             SHA256SUMS
