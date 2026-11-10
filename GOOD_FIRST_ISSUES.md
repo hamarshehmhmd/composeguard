@@ -1,6 +1,6 @@
 # Good first issues
 
-Small, well-scoped tasks for new contributors. Comment on (or open) an issue before starting.
+Small, well-scoped tasks for new contributors. Several of these are filed on GitHub with the `good first issue` and `help wanted` labels; [comment on an open issue](https://github.com/hamarshehmhmd/composeguard/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) (or open one) before starting.
 
 1. **`--version` in SARIF `semanticVersion`** – add the field to the SARIF driver.
 2. **Rule: `CG019` mutable bind mounts of source code in production** – flag `.:/app` without `:ro`.
